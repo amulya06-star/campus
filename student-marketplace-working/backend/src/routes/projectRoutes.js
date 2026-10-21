@@ -1,0 +1,18 @@
+const express = require("express");
+const { createProject, getProjects, getProjectById, updateProject, getMyProjects, toggleSavedProject, getWorkspace, updateRequirement, updateProjectStatus } = require("../controllers/projectController");
+const { applyToProject, getProjectApplications } = require("../controllers/applicationController");
+const { getMessages, sendMessage } = require("../controllers/messageController");
+const { createReview } = require("../controllers/reviewController");
+const { protect } = require("../middleware/authMiddleware");
+const router = express.Router();
+router.route("/").get(getProjects).post(protect, createProject);
+router.get("/mine", protect, getMyProjects);
+router.post("/:id/save", protect, toggleSavedProject);
+router.get("/:id/workspace", protect, getWorkspace);
+router.patch("/:id/requirements/:index", protect, updateRequirement);
+router.patch("/:id/status", protect, updateProjectStatus);
+router.route("/:id").get(getProjectById).put(protect, updateProject);
+router.route("/:projectId/applications").post(protect, applyToProject).get(protect, getProjectApplications);
+router.route("/:projectId/messages").get(protect, getMessages).post(protect, sendMessage);
+router.post("/:projectId/reviews", protect, createReview);
+module.exports = router;
